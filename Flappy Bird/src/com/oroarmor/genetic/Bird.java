@@ -5,7 +5,7 @@ import com.oroarmor.bird.Pipe;
 import com.oroarmor.network.*;
 import processing.core.PApplet;
 import processing.core.PImage;
- 
+
 public class Bird extends GeneticCreature {
 
 	public NeurNet brain;
@@ -61,7 +61,7 @@ public class Bird extends GeneticCreature {
 	void update() {
 		y += yVel;
 		yVel += (float) 0.7 * p.height / p.displayHeight;
-		//y = PApplet.constrain(y, r / 2, p.height - r / 2);
+		// y = PApplet.constrain(y, r / 2, p.height - r / 2);
 		if (y - r < 0 || y + r > p.height) {
 			alive = false;
 		}
@@ -76,16 +76,19 @@ public class Bird extends GeneticCreature {
 	}
 
 	void draw() {
+		r*=0.8;
+		p.rect(p.width/7-r/2, y - r/2, r, r);
+		r/=0.8;
 		p.pushMatrix();
 		if (y > p.height) {
-			xOffset+=p.width / 300;
+			xOffset += p.width / 300;
 		}
 		if (xOffset != 0) {
-			if(p.width/7 - xOffset < -30) {
+			if (p.width / 7 - xOffset < -30) {
 				p.popMatrix();
 				return;
 			}
-			p.translate(p.width / 7 - xOffset, p.height - r/2);
+			p.translate(p.width / 7 - xOffset, p.height - r / 2);
 		} else {
 			p.translate(p.width / 7, y);
 		}
@@ -95,11 +98,12 @@ public class Bird extends GeneticCreature {
 			currentAngle = PApplet.lerp(currentAngle, 1f, 0.1f);
 		}
 		p.rotate(currentAngle);
-		if(!alive) {
+		if (!alive) {
 			flappy.filter(PApplet.GRAY);
 		}
 		p.image(flappy, 0, 0, r, r * 12 / 17);
 		p.popMatrix();
+		
 	}
 
 	public void setPApplet(PApplet _p) {
@@ -118,12 +122,15 @@ public class Bird extends GeneticCreature {
 	}
 
 	public boolean checkCollision(Pipe pipe) {
+		r*=0.8;
 		if (pipe.x < p.width / 7 + r && pipe.x + pipe.width > p.width / 7 - r) {
 			if (y - r < pipe.yTop || y + r > pipe.yTop + pipe.spacing) {
 				alive = false;
+				r/=0.8;
 				return true;
 			}
 		}
+		r/=0.8;
 		return false;
 	}
 
@@ -136,7 +143,7 @@ public class Bird extends GeneticCreature {
 		return fitness;
 	}
 
-	public Bird cross(ArrayList<GeneticCreature> nextGen, float[] fitnessPercent, int genNum) {
+	public Bird cross(ArrayList<GeneticCreature> nextGen, float[] fitnessPercent, float[] evolvingConditions) {
 		Bird newBird = new Bird(brainConfig, parentNum, p);
 		int[] thing = { 4, 4, 4, 1 };
 		Bird b1 = null;
@@ -160,13 +167,17 @@ public class Bird extends GeneticCreature {
 		if (b2 == null) {
 			b2 = (Bird) nextGen.get(0);
 		}
+
+		int pipes = (int) evolvingConditions[0];
+		int genNum = (int) evolvingConditions[1];
+
 		NeurNet avNetwork = averageNetworks(b1.brain, b2.brain, thing);
 		NeurNet randomNet = new NeurNet(thing);
 		NeurNet newNetwork = averageNetworks(avNetwork, randomNet, thing);
-		if (genNum > 40 && Math.random() > 0.5) {
+		if (pipes > 40 && Math.random() > 0.5) {
 			newNetwork = avNetwork;
 		} else {
-			int mutations = (int) (Math.log(genNum * genNum + 1)+1);
+			int mutations = (int) (Math.log(pipes * pipes + genNum/3 + 1) + 1);
 			for (int i = 0; i < mutations; i++) {
 				newNetwork = averageNetworks(avNetwork, newNetwork, thing);
 			}

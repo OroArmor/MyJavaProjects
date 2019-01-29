@@ -69,6 +69,7 @@ public class GeneticAlgorithim<T extends GeneticCreature> {
 		if (currentGen.size() != 0) {
 			for (T creature : currentGen) {
 				creature.calculateFitness(o, addlFitnessComponents);
+				nextGen.add(creature);
 			}
 		}
 
@@ -89,7 +90,8 @@ public class GeneticAlgorithim<T extends GeneticCreature> {
 		currentGen.clear();
 
 		for (int i = 0; i < numCreatures; i++) {
-			currentGen.add((T) nextGen.get(0).cross((ArrayList<GeneticCreature>) nextGen, fitnessPercent, genNum));
+			currentGen.add((T) nextGen.get(0).cross((ArrayList<GeneticCreature>) nextGen, fitnessPercent,
+					addlFitnessComponents));
 		}
 		genNum++;
 		nextGen.clear();
