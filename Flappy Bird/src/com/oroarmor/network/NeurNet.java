@@ -1,8 +1,14 @@
 package com.oroarmor.network;
 
+import java.io.Serializable;
+
 import processing.core.*;
 
-public class NeurNet {
+public class NeurNet implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	int input_nodes;
 	int[] hidden_nodes;
 	int output_nodes;

@@ -1,5 +1,6 @@
 package com.oroarmor.genetic;
 
+import java.io.*;
 import java.util.*;
 
 public class GeneticAlgorithim<T extends GeneticCreature> {
@@ -8,6 +9,7 @@ public class GeneticAlgorithim<T extends GeneticCreature> {
 	public ArrayList<T> nextGen;
 	public int genNum;
 	int numCreatures;
+	public T bestCreature;
 
 	public GeneticAlgorithim(int _numCreatures, T creatureType) {
 		currentGen = new ArrayList<T>();
@@ -18,7 +20,11 @@ public class GeneticAlgorithim<T extends GeneticCreature> {
 		}
 		setup();
 		genNum = 0;
-
+		bestCreature = null;
+		File f = new File("data/bestCreature.ser");
+		if(f.exists() && !f.isDirectory()) {
+		  importBest();
+		}
 	}
 
 	private void setup() {
@@ -40,7 +46,6 @@ public class GeneticAlgorithim<T extends GeneticCreature> {
 	}
 
 	public void run(float[] inputs) {
-
 		for (T creature : currentGen) {
 			creature.run(inputs.clone());
 		}
@@ -75,6 +80,12 @@ public class GeneticAlgorithim<T extends GeneticCreature> {
 
 		nextGen.sort(Comparator.comparing(GeneticCreature::getFitness));
 
+		if (bestCreature == null) {
+			bestCreature = nextGen.get(numCreatures - 1);
+		} else if (bestCreature.getFitness() < nextGen.get(numCreatures - 1).getFitness()) {
+			bestCreature = nextGen.get(numCreatures - 1);
+		}
+
 		float totalFitness = 0;
 
 		for (int i = 0; i < nextGen.size(); i++) {
@@ -95,6 +106,37 @@ public class GeneticAlgorithim<T extends GeneticCreature> {
 		}
 		genNum++;
 		nextGen.clear();
+		serializeBest();
+	}
+
+	private void serializeBest() {
+		try {
+			FileOutputStream fileOut = new FileOutputStream("src/data/bestCreature.ser");
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(bestCreature);
+			out.close();
+			fileOut.close();
+		} catch (Exception e) {
+			System.err.println(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void importBest() {
+		try {
+			FileInputStream fileIn = new FileInputStream("/bestCreature.ser");
+			ObjectInputStream in = new ObjectInputStream(fileIn);
+			bestCreature = (T) in.readObject();
+			in.close();
+			fileIn.close();
+		} catch (IOException i) {
+			i.printStackTrace();
+			return;
+		} catch (ClassNotFoundException c) {
+			System.out.println("T class not found");
+			c.printStackTrace();
+			return;
+		}
 	}
 
 }

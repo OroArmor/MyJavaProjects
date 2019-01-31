@@ -43,8 +43,6 @@ public class GeneticsMain extends PApplet {
 	}
 
 	public void draw() {
-		// frameRate(30);
-		System.out.println(frameRate);
 		background(0);
 		if (bg) {
 			bgOff--;
@@ -89,9 +87,13 @@ public class GeneticsMain extends PApplet {
 		if (passedPipes == maxPipes) {
 			test.evolve(pipes[nearestPipe], GeneticInfo);
 			maxPipes += 1;
+			test.bestCreature.setup();
 		}
 		text("Gen: " + genNum + ", GenTime: " + passedPipes + ", Still Alive: " + test.currentGen.size(), 50, 50);
-
+		if (test.bestCreature != null) {
+			test.bestCreature.flappy.filter(PApplet.GRAY);
+			test.bestCreature.run(standardInputs);
+		}
 	}
 
 	public void mouseClicked() {

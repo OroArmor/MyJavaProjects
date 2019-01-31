@@ -1,10 +1,13 @@
 package com.oroarmor.genetic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.oroarmor.network.NeurNet;
 
-public abstract class GeneticCreature {
+public abstract class GeneticCreature implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	public int[] brainConfig;
 	public NeurNet brain;
@@ -18,7 +21,6 @@ public abstract class GeneticCreature {
 		brain = new NeurNet(brainConfig);
 	}
 
-	
 	public abstract void randomize();
 
 	public abstract void setParent(int iding);
@@ -33,7 +35,8 @@ public abstract class GeneticCreature {
 
 	public abstract void calculateFitness(Object o, float[] addlFitnessComponents);
 
-	public abstract GeneticCreature cross(ArrayList<GeneticCreature> nextGen, float[] fitnessPercent, float[] evolvingConditions);
+	public abstract GeneticCreature cross(ArrayList<GeneticCreature> nextGen, float[] fitnessPercent,
+			float[] evolvingConditions);
 
 	public abstract float getFitness();
 

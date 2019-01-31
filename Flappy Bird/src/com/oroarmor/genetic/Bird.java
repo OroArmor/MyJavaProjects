@@ -7,10 +7,11 @@ import processing.core.PApplet;
 import processing.core.PImage;
 
 public class Bird extends GeneticCreature {
-
+	private static final long serialVersionUID = 1L;
+	
 	public NeurNet brain;
 	public int parentNum;
-	PApplet p;
+	transient PApplet p;
 	public float fitness;
 
 	float y;
@@ -19,7 +20,7 @@ public class Bird extends GeneticCreature {
 	boolean alive;
 	int[] brainConfig;
 	int jumpCooldown;
-	PImage flappy;
+	transient PImage flappy;
 	float currentAngle;
 	int xOffset;
 
@@ -38,9 +39,9 @@ public class Bird extends GeneticCreature {
 		r = p.width / 25;
 		alive = true;
 		fitness = 0;
-		flappy = p.loadImage("data/flappy.png");
 		currentAngle = 1;
 		xOffset = 0;
+		flappy = p.loadImage("data/flappy.png");
 	}
 
 	public void run(float[] inputs) {
@@ -76,9 +77,6 @@ public class Bird extends GeneticCreature {
 	}
 
 	void draw() {
-		r*=0.8;
-		p.rect(p.width/7-r/2, y - r/2, r, r);
-		r/=0.8;
 		p.pushMatrix();
 		if (y > p.height) {
 			xOffset += p.width / 300;
@@ -103,7 +101,7 @@ public class Bird extends GeneticCreature {
 		}
 		p.image(flappy, 0, 0, r, r * 12 / 17);
 		p.popMatrix();
-		
+
 	}
 
 	public void setPApplet(PApplet _p) {
@@ -122,15 +120,15 @@ public class Bird extends GeneticCreature {
 	}
 
 	public boolean checkCollision(Pipe pipe) {
-		r*=0.8;
+		r *= 0.8;
 		if (pipe.x < p.width / 7 + r && pipe.x + pipe.width > p.width / 7 - r) {
 			if (y - r < pipe.yTop || y + r > pipe.yTop + pipe.spacing) {
 				alive = false;
-				r/=0.8;
+				r /= 0.8;
 				return true;
 			}
 		}
-		r/=0.8;
+		r /= 0.8;
 		return false;
 	}
 
@@ -177,7 +175,7 @@ public class Bird extends GeneticCreature {
 		if (pipes > 40 && Math.random() > 0.5) {
 			newNetwork = avNetwork;
 		} else {
-			int mutations = (int) (Math.log(pipes * pipes + genNum/3 + 1) + 1);
+			int mutations = (int) (Math.log(pipes * pipes + genNum / 3 + 1) + 1);
 			for (int i = 0; i < mutations; i++) {
 				newNetwork = averageNetworks(avNetwork, newNetwork, thing);
 			}

@@ -1,6 +1,12 @@
 package com.oroarmor.network;
 
-public class Matrix {
+import java.io.Serializable;
+
+public class Matrix  implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public int cols;
 	public int rows;
 	public float[][] matrix;
