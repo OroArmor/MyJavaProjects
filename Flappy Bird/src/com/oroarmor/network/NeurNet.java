@@ -105,19 +105,23 @@ public class NeurNet implements Serializable {
 		outputs = Matrix.sigmoid(outputs);
 
 		Matrix target_values = Matrix.fromArray(target_array);
-
+		
 		Matrix output_errors = Matrix.subtract(target_values, outputs);
-
-		Matrix gradients = Matrix.dsigmoid(outputs);
-		gradients.mult(output_errors);
-		gradients.mult(learning_rate);
-
-		Matrix hidden_T = Matrix.transpose(hidden[0]);
-		Matrix weight_ho_deltas = Matrix.mult(gradients, hidden_T);
-
-		weights_ho.add(weight_ho_deltas);
-
-		bias_o.add(gradients);
+	
+		
+		
+			Matrix gradients = Matrix.dsigmoid(outputs);
+			gradients.mult(output_errors);
+			gradients.mult(learning_rate);
+	
+			Matrix hidden_T = Matrix.transpose(hidden[hidden.length - 1]);
+			Matrix weight_ho_deltas = Matrix.mult(gradients, hidden_T);
+	
+			weights_ho.add(weight_ho_deltas);
+	
+			bias_o.add(gradients);
+			
+			
 
 		Matrix who_t = Matrix.transpose(weights_ho);
 		Matrix hidden_errors = Matrix.mult(who_t, output_errors);
